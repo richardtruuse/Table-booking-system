@@ -1,29 +1,32 @@
 <template>
   <div class="floor-plan">
-    <div
+    <TableCard
       v-for="table in tables"
       :key="table.id"
-      class="table-wrapper"
-      :style="{ left: table.xPosition + 'px', top: table.yPosition + 'px' }"
-    >
-      <div class="chairs chairs--top">
-        <div v-for="n in Math.ceil(table.capacity / 2)" :key="n" class="chair" />
-      </div>
+      :table="table"
+      :isOccupied="isOccupied(table)"
+      :isRecommended="isRecommended(table)"
+      :isSelected="isSelected(table)"
+      :reservation="getReservation(table.id)"
+      @select="selectTable"
+    />
 
-      <div
-        class="table"
-        :class="{
-          'table--occupied': isOccupied(table),
-          'table--recommended': isRecommended(table),
-          'table--selected': isSelected(table)
-        }"
-        @click="selectTable(table)"
-      >
-        {{ table.tableNumber }}
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-box legend-box--available"></div>
+        <span>Available</span>
       </div>
-
-      <div class="chairs chairs--bottom">
-        <div v-for="n in Math.floor(table.capacity / 2)" :key="n" class="chair" />
+      <div class="legend-item">
+        <div class="legend-box legend-box--occupied"></div>
+        <span>Occupied</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box legend-box--recommended"></div>
+        <span>Recommended</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box legend-box--selected"></div>
+        <span>Selected</span>
       </div>
     </div>
   </div>
@@ -33,13 +36,20 @@
 import { computed } from 'vue'
 import type { Table } from '~/types/entities/Table'
 import { useTableStore } from '~/stores/tableStore'
+import { useReservationStore } from '~/stores/reservationStore'
+import TableCard from '~/components/reservation/TableCard.vue'
 
 const tableStore = useTableStore()
+const reservationStore = useReservationStore()
 const tables = computed(() => tableStore.tables)
 
-const isOccupied = (table: Table) => tableStore.occupiedTableIds.includes(table.id)
+const isOccupied = (table: Table) => reservationStore.reservations.some(r => r.table.id === table.id)
 const isRecommended = (table: Table) => tableStore.recommendedTableId === table.id
 const isSelected = (table: Table) => tableStore.selectedTableId === table.id
+
+const getReservation = (tableId: number) => {
+  return reservationStore.reservations.find(r => r.table.id === tableId)
+}
 
 const selectTable = (table: Table) => {
   if (!isOccupied(table)) {
@@ -58,61 +68,35 @@ const selectTable = (table: Table) => {
   border-radius: 12px;
 }
 
-.table-wrapper {
+.legend {
   position: absolute;
+  bottom: 16px;
+  right: 16px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.table {
-  width: 60px;
-  height: 60px;
-  background: #b0bec5;
+  gap: 8px;
+  background: white;
+  padding: 12px;
   border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.legend-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-  transition: background 0.2s;
+  gap: 8px;
+  font-size: 13px;
+  color: #000;
 }
 
-.table:hover {
-  filter: brightness(1.1);
+.legend-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
 }
 
-.table--occupied {
-  background: #78909c;
-  cursor: not-allowed;
-}
-
-.table--recommended {
-  background: #e53935;
-  color: white;
-}
-
-.table--selected {
-  background: #1565c0;
-  color: white;
-}
-
-.chairs {
-  display: flex;
-  gap: 6px;
-}
-
-.chair {
-  width: 14px;
-  height: 14px;
-  background: #b0bec5;
-  border-radius: 3px;
-}
-
-.table--occupied ~ .chairs .chair,
-.chairs:has(~ .table--occupied) .chair {
-  background: #78909c;
-}
+.legend-box--available { background: #b0bec5; }
+.legend-box--occupied { background: #78909c; }
+.legend-box--recommended { background: #e53935; }
+.legend-box--selected { background: #1565c0; }
 </style>

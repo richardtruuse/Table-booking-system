@@ -26,4 +26,5 @@ public class Reservation {
     private int reservationSize;
     private String customerName;
     private String customerEmail;
+    private String notes;
 }
