@@ -1,5 +1,21 @@
 <template>
   <div class="floor-plan">
+    <div class="indoor-zone">
+      <span class="indoor-label">INDOOR</span>
+    </div>
+
+    <div class="terrace-zone">
+      <span class="terrace-label">TERRACE</span>
+    </div>
+
+    <div class="entrance-zone">
+      <span class="entrance-label">ENTRANCE</span>
+    </div>
+
+    <div class="bar-zone">
+      <span class="bar-label">BAR</span>
+    </div>
+
     <TableCard
       v-for="table in tables"
       :key="table.id"
@@ -67,6 +83,96 @@ const selectTable = (table: Table) => {
   border: 1px solid #ddd;
   border-radius: 12px;
   margin: 0 auto;
+}
+
+.indoor-zone {
+  position: absolute;
+  inset: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.indoor-label {
+  color: #90a4ae;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  opacity: 0.35;
+}
+
+.terrace-zone {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 450px;
+  height: 250px;
+  border-top: 2px dashed #d1c4b7;
+  border-right: 2px dashed #d1c4b7;
+  border-radius: 0 8px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.terrace-label {
+  color: #90a4ae;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.5;
+}
+
+.entrance-zone {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-3%);
+  width: 60px;
+  height: 40px;
+  border: 2px dashed #4CAF50;
+  border-radius: 8px 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.entrance-label {
+  color: #90a4ae;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.5;
+}
+
+.bar-zone {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 80px;
+  height: 300px;
+  border: 2px dashed #FF6B6B;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bar-label {
+  color: #90a4ae;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.5;
 }
 
 .legend {
